@@ -1,0 +1,13 @@
+{application, erlfsmon,
+ [
+  {description, "Erlang FS Monitor"},
+  {vsn, git},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  gproc
+                 ]},
+  {mod, { erlfsmon_app, []}},
+  {env, []}
+ ]}.
