@@ -33,5 +33,10 @@ init([]) ->
         _ -> ok
     end,
 
-    {ok, { {one_for_one, 5, 10}, [?CHILD(M, worker, ["."])]} }.
+    Path = case application:get_env(path) of
+        {ok, P} -> P;
+        undefined -> "."
+    end,
+
+    {ok, { {one_for_one, 5, 10}, [?CHILD(M, worker, [Path])]} }.
 
