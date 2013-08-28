@@ -9,4 +9,6 @@ sync:
 endif
 
 run:
-	ERL_LIBS=deps erl -pa ebin -eval '[application:ensure_started(A, permanent) || A <- [gproc,erlfsmon]]'
+	ERL_LIBS=deps erl -pa ebin \
+		 -eval '[application:ensure_started(A, permanent) || A <- [gproc,erlfsmon]]' \
+		 -eval 'erlfsmon:start_logger()'

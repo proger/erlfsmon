@@ -22,6 +22,16 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    M = erlfsmon_fsevent,
-    {ok, { {one_for_one, 5, 10}, [?CHILD(erlfsmon_fsevent, worker, ["."])]} }.
+    M = case os:type() of
+        {unix, darwin} -> erlfsmon_fsevent;
+        {unix, linux} -> erlfsmon_fanotify;
+        _ -> throw(os_not_supported)
+    end,
+
+    case M:find_executable() of
+        false -> throw(executable_not_found);
+        _ -> ok
+    end,
+
+    {ok, { {one_for_one, 5, 10}, [?CHILD(M, worker, ["."])]} }.
 

@@ -1,4 +1,4 @@
--module(erlfsmon_fsevent).
+-module(erlfsmon_fanotify).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 
@@ -19,7 +19,7 @@ start_link(Path) ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [Path], []).
 
 find_executable() ->
-    os:find_executable("fsevent_watch").
+    os:find_executable("fanotify_watch").
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -27,7 +27,7 @@ find_executable() ->
 
 init([Path]) ->
     Port = erlang:open_port({spawn_executable, find_executable()},
-        [stream, exit_status, {line, 16384}, {args, ["-F", Path]}, {cd, "."}]),
+        [stream, exit_status, {line, 16384}, {args, ["-c"]}, {cd, "."}]),
     {ok, #state{
             port=Port,
             path=Path
@@ -39,14 +39,10 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-
 handle_info({_Port, {data, {eol, Line}}}, State) ->
     [_EventId, Flags1, Path] = string:tokens(Line, [$\t]),
-    [_, Flags2] = string:tokens(Flags1, [$=]),
+    Flags = [convert_flag(F) || F <- Flags1],
     
-    {ok, T, _} = erl_scan:string(Flags2 ++ "."),
-    {ok, Flags} = erl_parse:parse_term(T),
-
     notify(file_event, {Path, Flags}),
     {noreply, State};
 handle_info({_Port, {data, {noeol, Line}}}, State) ->
@@ -68,12 +64,10 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
-% possible events:
-% 
-% mustscansubdirs,userdropped,kerneldropped,eventidswrapped,historydone,rootchanged,
-% mount,unmount,created,removed,inodemetamod,renamed,modified,finderinfomod,changeowner,
-% xattrmod,isfile,isdir,issymlink,ownevent
-%
+convert_flag($C) -> closed;
+convert_flag($W) -> modified;
+convert_flag($D) -> isdir;
+convert_flag(_) -> undefined.
 
 notify(file_event = A, Msg) ->
     Key = {erlfsmon, A},
