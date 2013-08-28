@@ -76,6 +76,13 @@ monitor_executable(Path) ->
         _ -> undefined
     end.
 
+% possible events:
+% 
+% mustscansubdirs,userdropped,kerneldropped,eventidswrapped,historydone,rootchanged,
+% mount,unmount,created,removed,inodemetamod,renamed,modified,finderinfomod,changeowner,
+% xattrmod,isfile,isdir,issymlink,ownevent
+%
+
 file_event(Path, Flags) ->
     io:format("event ~p path ~p~n", [Flags, Path]),
     notify(file_event, {Path, Flags}).
