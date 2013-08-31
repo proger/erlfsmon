@@ -1,8 +1,11 @@
 -module(erlfsmon).
--export([subscribe/0, start_logger/0]).
+-export([subscribe/0, known_events/0, start_logger/0]).
 
 subscribe() ->
     gproc:reg({p, l, {erlfsmon, file_event}}).
+
+known_events() ->
+    gen_server:call(erlfsmon, known_events).
 
 start_logger() ->
     spawn(fun() -> subscribe(), logger_loop() end).

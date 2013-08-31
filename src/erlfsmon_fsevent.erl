@@ -1,6 +1,6 @@
 -module(erlfsmon_fsevent).
 -behaviour(gen_server).
--define(SERVER, ?MODULE).
+-define(SERVER, erlfsmon).
 
 %% API Function Exports
 -export([start_link/1, find_executable/0]).
@@ -33,6 +33,11 @@ init([Path]) ->
             path=Path
         }}.
 
+handle_call(known_events, _From, State) ->
+    Known = [mustscansubdirs,userdropped,kerneldropped,eventidswrapped,historydone,rootchanged,
+        mount,unmount,created,removed,inodemetamod,renamed,modified,finderinfomod,changeowner,
+        xattrmod,isfile,isdir,issymlink,ownevent],
+    {reply, Known, State};
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
@@ -67,13 +72,6 @@ code_change(_OldVsn, State, _Extra) ->
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
-
-% possible events:
-% 
-% mustscansubdirs,userdropped,kerneldropped,eventidswrapped,historydone,rootchanged,
-% mount,unmount,created,removed,inodemetamod,renamed,modified,finderinfomod,changeowner,
-% xattrmod,isfile,isdir,issymlink,ownevent
-%
 
 notify(file_event = A, Msg) ->
     Key = {erlfsmon, A},

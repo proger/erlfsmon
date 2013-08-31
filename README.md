@@ -32,6 +32,12 @@ Shell got {<0.47.0>,
            {erlfsmon,file_event},
            {"/tank/proger/erlfsmon/ebin/erlfsmon.app",[closed,modified]}}
 
+> erlfsmon:known_events(). % returns events known by your current backend
+[mustscansubdirs,userdropped,kerneldropped,eventidswrapped,
+ historydone,rootchanged,mount,unmount,created,removed,
+ inodemetamod,renamed,modified,finderinfomod,changeowner,
+ xattrmod,isfile,isdir,issymlink,ownevent]
+
 > erlfsmon:start_logger(). % starts a sample process that logs events with error_logger
 
 =INFO REPORT==== 28-Aug-2013::19:36:26 ===

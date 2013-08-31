@@ -1,6 +1,6 @@
 -module(erlfsmon_fanotify).
 -behaviour(gen_server).
--define(SERVER, ?MODULE).
+-define(SERVER, erlfsmon).
 
 %% API Function Exports
 -export([start_link/1, find_executable/0]).
@@ -33,6 +33,9 @@ init([Path]) ->
             path=Path
         }}.
 
+handle_call(known_events, _From, State) ->
+    Known = [closed, modified, isdir, undefined],
+    {reply, Known, State};
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
