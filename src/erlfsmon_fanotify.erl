@@ -51,7 +51,7 @@ handle_info({_Port, {data, {eol, Line}}}, State) ->
 handle_info({_Port, {data, {noeol, Line}}}, State) ->
     error_logger:error_msg("~p line too long: ~p, ignoring~n", [?SERVER, Line]),
     {noreply, State};
-handle_info({_Port, {data, {exit_status, Status}}}, State) ->
+handle_info({_Port, {exit_status, Status}}, State) ->
     {stop, {port_exit, Status}, State};
 
 handle_info(_Info, State) ->
