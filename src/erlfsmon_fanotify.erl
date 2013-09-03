@@ -58,7 +58,7 @@ handle_info(_Info, State) ->
     {noreply, State}.
 
 terminate(_Reason, #state{port=Port}) ->
-    port_close(Port),
+    (catch port_close(Port)),
     ok.
 
 code_change(_OldVsn, State, _Extra) ->
