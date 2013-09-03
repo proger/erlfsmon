@@ -1,58 +1,46 @@
--module(erlfsmon_fsevent).
+-module(erlfsmon_server).
 -behaviour(gen_server).
 -define(SERVER, erlfsmon).
 
 %% API Function Exports
--export([start_link/1, find_executable/0]).
+-export([start_link/3]).
 
 %% gen_server Function Exports
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
          terminate/2, code_change/3]).
 
--record(state, {port, path}).
+-record(state, {port, path, backend}).
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
-start_link(Path) ->
-    gen_server:start_link({local, ?SERVER}, ?MODULE, [Path], []).
-
-find_executable() ->
-    os:find_executable("fsevent_watch").
+start_link(Backend, Path, Cwd) ->
+    gen_server:start_link({local, ?SERVER}, ?MODULE, [Backend, Path, Cwd], []).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
-init([Path]) ->
-    Port = erlang:open_port({spawn_executable, find_executable()},
-        [stream, exit_status, {line, 16384}, {args, ["-F", Path]}, {cd, "."}]),
+init([Backend, Path, Cwd]) ->
+    Port = Backend:start_port(Path, Cwd),
     {ok, #state{
             port=Port,
-            path=Path
+            path=Path,
+            backend=Backend
         }}.
 
-handle_call(known_events, _From, State) ->
-    Known = [mustscansubdirs,userdropped,kerneldropped,eventidswrapped,historydone,rootchanged,
-        mount,unmount,created,removed,inodemetamod,renamed,modified,finderinfomod,changeowner,
-        xattrmod,isfile,isdir,issymlink,ownevent],
-    {reply, Known, State};
+handle_call(known_events, _From, #state{backend=Backend} = State) ->
+    {reply, Backend:known_events(), State};
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-
-handle_info({_Port, {data, {eol, Line}}}, State) ->
-    [_EventId, Flags1, Path] = string:tokens(Line, [$\t]),
-    [_, Flags2] = string:tokens(Flags1, [$=]),
-    
-    {ok, T, _} = erl_scan:string(Flags2 ++ "."),
-    {ok, Flags} = erl_parse:parse_term(T),
-
-    notify(file_event, {Path, Flags}),
+handle_info({_Port, {data, {eol, Line}}}, #state{backend=Backend} = State) ->
+    Event = Backend:line_to_event(Line),
+    notify(file_event, Event),
     {noreply, State};
 handle_info({_Port, {data, {noeol, Line}}}, State) ->
     error_logger:error_msg("~p line too long: ~p, ignoring~n", [?SERVER, Line]),
