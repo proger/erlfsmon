@@ -33,10 +33,7 @@ init([]) ->
         _ -> ok
     end,
 
-    Path = case application:get_env(path) of
-        {ok, P} -> P;
-        undefined -> "."
-    end,
+    Path = erlfsmon:path(),
 
-    {ok, { {one_for_one, 5, 10}, [?CHILD(erlfsmon_server, worker, [Backend, Path, "."])]} }.
+    {ok, { {one_for_one, 5, 10}, [?CHILD(erlfsmon_server, worker, [Backend, Path, Path])]} }.
 
