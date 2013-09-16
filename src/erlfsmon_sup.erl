@@ -38,5 +38,8 @@ init([]) ->
         undefined -> "."
     end,
 
-    {ok, { {one_for_one, 5, 10}, [?CHILD(erlfsmon_server, worker, [Backend, Path, "."])]} }.
+    {ok, { {one_for_one, 5, 10}, [
+                ?CHILD(erlfsmon_server, worker, [Backend, Path, "."]),
+                ?CHILD(gen_event, worker, [{local, erlfsmon_events}])
+            ] } }.
 

@@ -2,7 +2,7 @@
 -export([subscribe/0, known_events/0, start_logger/0]).
 
 subscribe() ->
-    gproc:reg({p, l, {erlfsmon, file_event}}).
+    gen_event:add_sup_handler(erlfsmon_events, {erlfsmon_event_bridge, self()}, [self()]).
 
 known_events() ->
     gen_server:call(erlfsmon, known_events).

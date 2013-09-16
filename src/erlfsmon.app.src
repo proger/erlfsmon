@@ -5,8 +5,7 @@
   {registered, []},
   {applications, [
                   kernel,
-                  stdlib,
-                  gproc
+                  stdlib
                  ]},
   {mod, { erlfsmon_app, []}},
   {env, []}

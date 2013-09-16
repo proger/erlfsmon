@@ -64,4 +64,4 @@ code_change(_OldVsn, State, _Extra) ->
 
 notify(file_event = A, Msg) ->
     Key = {erlfsmon, A},
-    gproc:send({p, l, Key}, {self(), Key, Msg}).
+    gen_event:notify(erlfsmon_events, {self(), Key, Msg}).

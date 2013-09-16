@@ -9,8 +9,6 @@ The monitoring path is read from the application configuration (variable `path`)
 Stay alert to the fact that in Linux you will get events for the whole
 mount point -- the client must filter events by itself (see Caveats section in README.md for `fanotify_watch`).
 
-The application is fairly lightweight -- it uses only [gproc](https://github.com/uwiger/gproc).
-
 Once the `erlfsmon` app is started you may use the simple API.
 
 ```erlang
