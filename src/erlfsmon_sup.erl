@@ -24,7 +24,8 @@ start_link() ->
 init([]) ->
     Backend = case os:type() of
         {unix, darwin} -> fsevents;
-        {unix, linux} -> fanotify;
+        {unix, linux} -> inotifywait;
+        %{unix, linux} -> fanotify;
         _ -> throw(os_not_supported)
     end,
 

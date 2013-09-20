@@ -1,13 +1,13 @@
 ## erlfsmon
 
-`erlfsmon` is a wrapper around [fsevent_watch](https://github.com/proger/fsevent_watch)
-and [fanotify_watch](https://github.com/proger/fanotify_watch) used as ports.
+`erlfsmon` is a wrapper around
+[fsevent_watch](https://github.com/proger/fsevent_watch),
+[fanotify_watch](https://github.com/proger/fanotify_watch) and
+[inotifywait](https://github.com/rvoicilas/inotify-tools/wiki) used as ports.
 
 The application relies on the appropriate binaries to be in your `$PATH`.
 
 The monitoring path is read from the application configuration (variable `path`). It defaults to `"."`.
-Stay alert to the fact that in Linux you will get events for the whole
-mount point -- the client must filter events by itself (see Caveats section in README.md for `fanotify_watch`).
 
 Once the `erlfsmon` app is started you may use the simple API.
 
