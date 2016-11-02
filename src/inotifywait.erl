@@ -7,6 +7,7 @@ find_executable() ->
 start_port(Path, Cwd) ->
     Path1 = filename:absname(Path),
     Args = [find_executable(), "-m", "-e", "close_write", "-e", "moved_to", "-e", "create", "-r", Path1],
+
     erlang:open_port({spawn_executable, erlsh:fdlink_executable()},
         [stream, exit_status, {line, 16384}, {args, Args}, {cd, Cwd}]).
 
@@ -25,7 +26,7 @@ convert_flag("ISDIR") -> isdir;
 convert_flag("CLOSE_WRITE") -> modified;
 convert_flag("CLOSE") -> closed;
 convert_flag("MOVED_TO") -> renamed;
-convert_flag(_) -> undefined.
+convert_flag(_Other) -> undefined.
 
 re() ->
     case get(inotifywait_re) of
