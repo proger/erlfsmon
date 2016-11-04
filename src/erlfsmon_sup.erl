@@ -2,7 +2,7 @@
 -behaviour(supervisor).
 
 %% API
--export([start_link/0]).
+-export([start_link/0, stop/0]).
 
 %% Supervisor callbacks
 -export([init/1]).
@@ -17,6 +17,9 @@
 start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
+stop() ->
+    erlfsmon_server:stop().
+
 %% ===================================================================
 %% Supervisor callbacks
 %% ===================================================================
@@ -30,13 +33,11 @@ init([]) ->
     end,
 
     case Backend:find_executable() of
-        false -> throw(executable_not_found);
+        false -> throw({executable_not_found, Backend});
         _ -> ok
     end,
 
-    Path = erlfsmon:path(),
-
     {ok, { {one_for_one, 5, 10}, [
-                ?CHILD(erlfsmon_server, worker, [Backend, Path, Path]),
+                ?CHILD(erlfsmon_server, worker, [Backend]),
                 ?CHILD(gen_event, worker, [{local, erlfsmon_events}])
             ] } }.

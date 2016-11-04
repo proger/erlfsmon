@@ -13,4 +13,4 @@ start(_StartType, _StartArgs) ->
     erlfsmon_sup:start_link().
 
 stop(_State) ->
-    ok.
+    erlfsmon_sup:stop().
