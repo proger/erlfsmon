@@ -24,14 +24,8 @@ start_link(Backend, Path, Cwd) ->
 
 init([Backend, Path, Cwd]) ->
     Port = Backend:start_port(Path, Cwd),
-    {ok, #state{
-            port=Port,
-            path=Path,
-            backend=Backend
-        }}.
+    {ok, #state{port=Port, path=Path, backend=Backend}}.
 
-handle_call(known_events, _From, #state{backend=Backend} = State) ->
-    {reply, Backend:known_events(), State};
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
@@ -63,5 +57,5 @@ code_change(_OldVsn, State, _Extra) ->
 %% ------------------------------------------------------------------
 
 notify(file_event = A, Msg) ->
-    Key = {erlfsmon, A},
+    Key = {?SERVER, A},
     gen_event:notify(erlfsmon_events, {self(), Key, Msg}).

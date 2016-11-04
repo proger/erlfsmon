@@ -1,6 +1,6 @@
 ## erlfsmon
 
-`erlfsmon` is a wrapper around [fswatch](https://github.com/emcrisostomo/fswatch) used as port. It used to support more backends, see [previous releases](https://github.com/proger/erlfsmon/releases).
+`erlfsmon` is a tiny (under 100 LOC) wrapper around [fswatch](https://github.com/emcrisostomo/fswatch) used as port. It used to support more backends, see [previous releases](https://github.com/proger/erlfsmon/releases).
 
 The application relies on `fswatch` present in `$PATH`.
 

@@ -1,5 +1,5 @@
 -module(fswatch).
--export([find_executable/0, start_port/2, known_events/0, line_to_event/1]).
+-export([find_executable/0, start_port/2, line_to_event/1]).
 
 find_executable() ->
     os:find_executable("fswatch").
@@ -9,8 +9,6 @@ start_port(Path, Cwd) ->
             "fswatch", "--format=%p\t%f", "--event-flag-separator", ",", Path],
     erlang:open_port({spawn_executable, os:find_executable("sh")},
         [stream, exit_status, {line, 16384}, {args, Args}, {cd, Cwd}]).
-
-known_events() -> meh.
 
 line_to_event(Line) ->
     [Path, Flags1] = string:tokens(Line, [$\t]),
