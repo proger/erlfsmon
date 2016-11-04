@@ -5,9 +5,9 @@ find_executable() ->
     os:find_executable("fswatch").
 
 start_port(Path, Cwd) ->
-    Args = ["-c", "$0 \"$@\" & PID=$!; read a; kill $PID",
-            "fswatch", "--format=%p\t%f", "--event-flag-separator", ",", Path],
-    erlang:open_port({spawn_executable, os:find_executable("sh")},
+    Args = [os:find_executable("fswatch"),
+            "--format=%p\t%f", "--event-flag-separator", ",", Path],
+    erlang:open_port({spawn_executable, erlsh:fdlink_executable()},
         [stream, exit_status, {line, 16384}, {args, Args}, {cd, Cwd}]).
 
 line_to_event(Line) ->
