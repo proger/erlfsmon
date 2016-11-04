@@ -9,8 +9,8 @@ The monitoring path is read from the application configuration (variable `path`)
 Once the `erlfsmon` app is started you may use the simple API.
 
 ```erlang
-% rebar compile && erl -pa ebin -eval 'application:start(erlfsmon).'
-%
+% rebar compile && erl -pa ebin -eval 'ok = application:ensure_started(erlfsmon, permanent).'
+
 > erlfsmon:subscribe(). % the pid will receive events as messages
 % wait for events
 > flush(). 
