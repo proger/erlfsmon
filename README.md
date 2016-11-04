@@ -1,17 +1,16 @@
 ## erlfsmon
 
-`erlfsmon` is a wrapper around
-[fsevent_watch](https://github.com/proger/fsevent_watch),
-[fanotify_watch](https://github.com/proger/fanotify_watch) and
-[inotifywait](https://github.com/rvoicilas/inotify-tools/wiki) used as ports.
+`erlfsmon` is a wrapper around [fswatch](https://github.com/emcrisostomo/fswatch) used as port. It used to support more backends, see [previous releases](https://github.com/proger/erlfsmon/releases).
 
-The application relies on the appropriate binaries to be in your `$PATH`.
+The application relies on `fswatch` present in `$PATH`.
 
 The monitoring path is read from the application configuration (variable `path`). It defaults to `"."`.
 
 Once the `erlfsmon` app is started you may use the simple API.
 
 ```erlang
+% rebar compile && erl -pa ebin -eval 'application:start(erlfsmon).'
+%
 > erlfsmon:subscribe(). % the pid will receive events as messages
 % wait for events
 > flush(). 
@@ -29,12 +28,6 @@ Shell got {<0.47.0>,
 Shell got {<0.47.0>,
            {erlfsmon,file_event},
            {"/tank/proger/erlfsmon/ebin/erlfsmon.app",[closed,modified]}}
-
-> erlfsmon:known_events(). % returns events known by your current backend
-[mustscansubdirs,userdropped,kerneldropped,eventidswrapped,
- historydone,rootchanged,mount,unmount,created,removed,
- inodemetamod,renamed,modified,finderinfomod,changeowner,
- xattrmod,isfile,isdir,issymlink,ownevent]
 
 > erlfsmon:start_logger(). % starts a sample process that logs events with error_logger
 
