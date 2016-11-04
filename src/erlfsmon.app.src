@@ -7,9 +7,10 @@
                   kernel,
                   stdlib
                  ]},
-  {mod, { erlfsmon_app, []}},
+  {mod, { erlfsmon, []}},
   {env, [
    {path, "."},
-   {backend, fswatch}
+   {backend, fswatch},
+   {gen_event_name, erlfsmon_events}
   ]}
  ]}.
