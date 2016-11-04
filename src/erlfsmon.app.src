@@ -8,5 +8,8 @@
                   stdlib
                  ]},
   {mod, { erlfsmon_app, []}},
-  {env, []}
+  {env, [
+   {path, "."},
+   {backend, fswatch}
+  ]}
  ]}.

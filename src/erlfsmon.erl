@@ -8,10 +8,8 @@ known_events() ->
     gen_server:call(erlfsmon, known_events).
 
 path() ->
-    case application:get_env(erlfsmon, path) of
-        {ok, P} -> filename:absname(P);
-        undefined -> filename:absname("")
-    end.
+    {ok, P} = application:get_env(erlfsmon, path),
+    P.
 
 start_logger() ->
     spawn(fun() -> subscribe(), logger_loop() end).

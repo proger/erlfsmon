@@ -22,12 +22,7 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    Backend = case os:type() of
-        {unix, darwin} -> fsevents;
-        {unix, linux} -> inotifywait;
-        %{unix, linux} -> fanotify;
-        _ -> throw(os_not_supported)
-    end,
+    {ok, Backend} = application:get_env(erlfsmon, backend),
 
     case Backend:find_executable() of
         false -> throw(executable_not_found);
