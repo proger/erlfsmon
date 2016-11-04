@@ -29,7 +29,7 @@ init([]) ->
         _ -> ok
     end,
 
-    Path = erlfsmon:path(),
+    {ok, Path} = application:get_env(erlfsmon, path),
 
     {ok, { {one_for_one, 5, 10}, [
                 ?CHILD(erlfsmon_server, worker, [Backend, Path, Path]),

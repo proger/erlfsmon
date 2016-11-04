@@ -1,15 +1,11 @@
 -module(erlfsmon).
--export([subscribe/0, known_events/0, path/0, start_logger/0]).
+-export([subscribe/0, known_events/0, start_logger/0]).
 
 subscribe() ->
     gen_event:add_sup_handler(erlfsmon_events, {erlfsmon_event_bridge, self()}, [self()]).
 
 known_events() ->
     gen_server:call(erlfsmon, known_events).
-
-path() ->
-    {ok, P} = application:get_env(erlfsmon, path),
-    P.
 
 start_logger() ->
     spawn(fun() -> subscribe(), logger_loop() end).
