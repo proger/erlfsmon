@@ -11,7 +11,7 @@
 -define(CHILD(I, Type, Args), {I, {I, start_link, Args}, permanent, 5000, Type, [I]}).
 
 start_link(Path, Backend, GenEvent) ->
-    supervisor:start_link({local, ?MODULE}, ?MODULE, [Path, Backend, GenEvent]).
+    supervisor:start_link(?MODULE, [Path, Backend, GenEvent]).
 
 init([Path, Backend, GenEvent]) ->
     case Backend:find_executable() of
