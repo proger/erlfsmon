@@ -8,6 +8,38 @@ The monitoring path is read from the application configuration (variable `path`)
 
 Once the `erlfsmon` app is started you may use the simple API.
 
+### The Core
+
+`erlfsmon` is an OTP application and uses `gen_event` to allow multiple subscribers. In case you do not want that, save the following to snippet `simplefs.erl` which is only 25 LoC. Test by running `simplefs:run(".", ".", self()).` You need erlsh for (reasons). Otherwise, keep reading.
+
+```
+-module(simplefs).
+-compile(export_all).
+
+run(Path, Cwd, Receiver) ->
+    Args = [os:find_executable("fswatch"),
+            "--format=%p\t%f", "--event-flag-separator", ",", Path],
+    erlang:open_port({spawn_executable, erlsh:fdlink_executable()},
+                     [stream, exit_status, {line, 16384}, {args, Args}, {cd, Cwd}]),
+    ?MODULE:loop([Path, Cwd, Receiver]).
+
+loop([_, _, Receiver] = Args) ->
+    receive
+        {_Port, {data, {eol, Line}}} -> % noeols are ignored!
+            [Path, Flags1] = string:tokens(Line, [$\t]),
+            Flags2 = string:tokens(Flags1, [$,]),
+            %% we trust fswatch enough to do list_to_atom
+            Receiver ! {Path, [list_to_atom(F) || F <- Flags2]},
+            ?MODULE:loop(Args);
+        {_Port, {exit_status, Status}} ->
+            error_logger:error_msg("fswatch exited with ~p, restarting~n", [Status]),
+            erlang:apply(?MODULE, run, Args);
+        T ->
+            error_logger:error_msg("unhandled message ~p~n", [T]),
+            ?MODULE:loop(Args)
+    end.
+```
+
 ### Building
 
 ```console
