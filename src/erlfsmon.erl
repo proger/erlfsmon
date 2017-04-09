@@ -14,6 +14,7 @@ start(_StartType, _StartArgs) ->
     erlfsmon_sup:start_link(Path, Backend, GenEvent).
 
 stop(_State) ->
+    % application takes care of stopping the supervisor
     ok.
 
 subscribe() ->
