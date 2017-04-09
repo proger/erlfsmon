@@ -10,7 +10,7 @@ Once the `erlfsmon` app is started you may use the simple API.
 
 ### The Core
 
-`erlfsmon` is an OTP application and uses `gen_event` to allow multiple subscribers. In case you do not want that, save the following to snippet `simplefs.erl` which is only 25 LoC. Test by running `simplefs:run(".", ".", self()).` You need erlsh for (reasons). Otherwise, keep reading.
+`erlfsmon` is an OTP application and uses `gen_event` to allow multiple subscribers. In case you do not want that, save the following to snippet `simplefs.erl` which is only 25 LoC. Test by running `simplefs:run(".", ".", self()).` You need [erlsh for reasons](https://github.com/proger/erlsh#fdlink-port). Otherwise, keep reading.
 
 ```erlang
 -module(simplefs).
